@@ -55,7 +55,7 @@ T(...) objects can be added together with each other and with string, like regul
 
 T.select(s) can parse a string s following the HTTP accept language format.
 
-## Update the translations files
+## Update the translation files
 
 Find all strings wrapped in T(...) in .py, .html, and .js files:
 ```
