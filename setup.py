@@ -14,7 +14,7 @@ setuptools.setup(
     author_email = 'massimo.dipierro@gmail.com',
     maintainer = 'Massimo Di Pierro',
     maintainer_email = 'massimo.dipierro@gmail.com',
-    description = 'Yet Another Template Language',
+    description = 'i18n + pluralization library with multi-plural form support and thread safe for web',
     long_description = "Yet another internationalizaton and pluralization library designed for efficiency and concurrency",
     long_description_content_type = "text/markdown",
     packages = ['pluralize'],
