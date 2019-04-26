@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 re_language = re.compile('^\w\w(-\w+)*.json$')
 
@@ -104,7 +104,7 @@ class Translator(object):
             if translations is None:
                 self.missing.add(text)
             elif isinstance(translations, dict) and translations:
-                k = max(i for i in translations.keys() if i <= n)
+                k = max(int(i) for i in translations.keys() if int(i) <= n)
                 text = translations[k].format(**kwargs)
         return text.format(**kwargs)
 

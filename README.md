@@ -15,7 +15,7 @@ fr-FR.json
 Each file has the following structure, for example for Italian (it.json):
 
 ```
-{"dog": {0: "no cane", 1: "un cane", 2: "{n} cani", 10: "tantissimi cani"}}
+{"dog": {"0": "no cane", "1": "un cane", "2": "{n} cani", "10": "tantissimi cani"}}
 ```
 
 The top level keys are the expressions to be translated and the associated value/dictionary maps a number to a translation.
@@ -24,7 +24,7 @@ Different translations correspond to different plural forms of the expression,
 Here is another example for the word "bed" in Czech
 
 ```
-{"bed": {0: "no postel", 1: "postel", 2: "postele", 5: "postelí"}}
+{"bed": {"0": "no postel", "1": "postel", "2": "postele", "5": "postelí"}}
 ```
 
 To translate and pluralize a string "dog" one simply warps the string in the T operator as follows:
