@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 re_language = re.compile('^\w\w(-\w+)*.json$')
 
@@ -64,8 +64,16 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(os.path.join(folder, filename)) as fp:
+                with open(os.path.join(folder, filename), 'rb') as fp:
                     self.languages[filename[:-5].lower()] = json.load(fp)
+
+    def save(self, folder):
+        """loads languages and pluralizations from folder/en-US.json files"""
+        self.languages = {}
+        for key in self.languages:
+            filename = '%s.json' % key
+            with open(os.path.join(folder, filename), 'wb') as fp:
+                json.dump(self.languages[key], fp, sort_keys=True, indent=4)
 
     def dump(self, folder):
         """save the loaded translation files"""
@@ -105,7 +113,7 @@ class Translator(object):
                 self.missing.add(text)
             elif isinstance(translations, dict) and translations:
                 k = max(int(i) for i in translations.keys() if int(i) <= n)
-                text = translations[k].format(**kwargs)
+                text = translations[str(k)].format(**kwargs)
         return text.format(**kwargs)
 
     def find_matches(self, folder, name='T', extensions=['py', 'js', 'html']):

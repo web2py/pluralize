@@ -2,11 +2,11 @@ clean:
 	rm -rf dist
 build:
 	make clean
-	python setup.py build
+	python3 setup.py build
 install: dist
-	python setup.py install
+	python3 setup.py install
 test:	install
-	python -m unittest tests.test_simple
+	python3 -m unittest tests.test_simple
 deploy:
 	make clean
 	#http://guide.python-distribute.org/creation.html
