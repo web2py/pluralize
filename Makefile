@@ -3,7 +3,7 @@ clean:
 build:
 	make clean
 	python3 setup.py build
-install: dist
+install: build
 	python3 setup.py install
 test:	install
 	python3 -m unittest tests.test_simple
