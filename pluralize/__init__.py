@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 re_language = re.compile('^\w\w(-\w+)*.json$')
 
@@ -64,7 +64,7 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(os.path.join(folder, filename), 'rb') as fp:
+                with open(os.path.join(folder, filename), 'r') as fp:
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
     def save(self, folder):
@@ -72,7 +72,7 @@ class Translator(object):
         self.languages = {}
         for key in self.languages:
             filename = '%s.json' % key
-            with open(os.path.join(folder, filename), 'wb') as fp:
+            with open(os.path.join(folder, filename), 'w') as fp:
                 json.dump(self.languages[key], fp, sort_keys=True, indent=4)
 
     def dump(self, folder):
