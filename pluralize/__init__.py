@@ -68,17 +68,9 @@ class Translator(object):
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
     def save(self, folder):
-        """loads languages and pluralizations from folder/en-US.json files"""
-        self.languages = {}
-        for key in self.languages:
-            filename = '%s.json' % key
-            with open(os.path.join(folder, filename), 'w') as fp:
-                json.dump(self.languages[key], fp, sort_keys=True, indent=4)
-
-    def dump(self, folder):
-        """save the loaded translation files"""
+        """save the loaded languages and pluralizations into folder/en-US.json files"""
         for tag in self.languages:
-            filename = tag + '.json'
+            filename = '%s.json' % tag
             with open(os.path.join(folder, filename), 'w') as fp:
                 json.dump(self.languages[tag], fp, sort_keys=True, indent=4)
 
