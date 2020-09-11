@@ -27,7 +27,7 @@ Here is another example for the word "bed" in Czech
 {"bed": {"0": "no postel", "1": "postel", "2": "postele", "5": "postelí"}}
 ```
 
-To translate and pluralize a string "dog" one simply warps the string in the T operator as follows:
+To translate and pluralize a string "dog" one simply wraps the string in the T operator as follows:
 
 ```
 >>> from pluralize import Translator

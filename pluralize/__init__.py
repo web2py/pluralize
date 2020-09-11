@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 re_language = re.compile('^\w\w(-\w+)*.json$')
 
@@ -68,19 +68,11 @@ class Translator(object):
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
     def save(self, folder):
-        """loads languages and pluralizations from folder/en-US.json files"""
-        self.languages = {}
+        """save the loaded translation files"""
         for key in self.languages:
             filename = '%s.json' % key
             with open(os.path.join(folder, filename), 'w') as fp:
                 json.dump(self.languages[key], fp, sort_keys=True, indent=4)
-
-    def dump(self, folder):
-        """save the loaded translation files"""
-        for tag in self.languages:
-            filename = tag + '.json'
-            with open(os.path.join(folder, filename), 'w') as fp:
-                json.dump(self.languages[tag], fp, sort_keys=True, indent=4)
 
     def select(self, accepted_languages='fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5'):
         """given appected_langauges string from HTTP header, picks the best match"""
@@ -119,11 +111,12 @@ class Translator(object):
     def find_matches(self, folder, name='T', extensions=['py', 'js', 'html']):
         """finds all strings in files in folder needing translations"""
         matches_found = set()
-        string_t_finder = r'(?<=[^\w]' + name + r'\()(?P<name>'\
-            + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|"\
-            + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|'\
-            + r'(?:"(?:[^"\\]|\\.)*"))'
-        regex_t = re.compile(string_t_finder)
+        re_string_t = (r'(?<=[^\w]%s\()(?P<name>'
+            r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')"
+            r"|(?:'(?:[^'\\]|\\.)*')"
+            r'|(?:"""(?:[^"]|"{1,2}(?!"))*""")'
+            r'|(?:"(?:[^"\\]|\\.)*"))') % name
+        regex_t = re.compile(re_string_t)
         for root, dirs, files in os.walk(folder):
             for name in files:
                 if name.split('.')[-1] in extensions:
