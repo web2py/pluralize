@@ -92,8 +92,8 @@ class Translator(object):
         self.local.language = None
         for tag in accepted_languages:
             if tag.lower() in self.languages:
-                self.local.tag = tag
-                self.local.language = self.languages[tag]
+                self.local.tag = tag.lower()
+                self.local.language = self.languages[tag.lower()]
                 break
 
     def __call__(self, text):
