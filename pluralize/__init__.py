@@ -60,6 +60,7 @@ class Translator(object):
         self.local.tag = None
         self.local.language = None
         self.missing = set()
+        self.folder = folder
         if folder:
             self.load(folder)
 
@@ -107,6 +108,8 @@ class Translator(object):
             translations = self.local.language.get(text)
             if translations is None:
                 self.missing.add(text)
+                self.update_languages(self.missing)
+                self.save(self.folder)
             elif isinstance(translations, dict) and translations:
                 k = max(int(i) for i in translations.keys() if int(i) <= n)
                 text = translations[str(k)].format(**kwargs)
