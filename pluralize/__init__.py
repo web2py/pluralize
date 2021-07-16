@@ -36,6 +36,10 @@ class lazyT(object):
         """str(T('dog')) -> 'cane'"""
         return self.xml()
 
+    def __mod__(self, obj):
+        """T('route %d') % 66 -> 'route 66'"""
+        return self.xml() % obj
+
     def xml(self):
         """same as str but for interoperability with yatl helpers"""
         return self.translator(self.text, **self.kwargs)
