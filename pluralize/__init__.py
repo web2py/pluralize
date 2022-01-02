@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "0.1.7"
+__version__ = "0.1.8"
 
 re_language = re.compile("^\w\w(-\w+)*.json$")
 
@@ -106,7 +106,7 @@ class Translator(object):
 
     def _translator(self, text, **kwargs):
         """translates/pluralizes"""
-        if self.local.language:
+        if getattr(self.local, "language", None):
             n = kwargs.get("n", 1)
             translations = self.local.language.get(text)
             if translations is None:
