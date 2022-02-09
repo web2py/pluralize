@@ -68,7 +68,7 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(os.path.join(folder, filename), "r") as fp:
+                with open(os.path.join(folder, filename), "r", encoding="utf-8") as fp:
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
     def save(self, folder=None):
