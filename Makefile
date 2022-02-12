@@ -4,8 +4,8 @@ build:
 	make clean
 	python3 setup.py build
 install: build
-	python3 setup.py install
-test:	install
+	sudo python3 setup.py install
+test: install
 	python3 -m unittest tests.test_simple
 deploy:
 	make clean
