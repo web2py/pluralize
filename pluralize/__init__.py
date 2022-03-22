@@ -83,7 +83,8 @@ class Translator(object):
         """given appected_langauges string from HTTP header, picks the best match"""
         if isinstance(accepted_languages, str):
             accepted_languages = [
-                tag.split(";")[0].strip() for tag in accepted_languages.split(",")
+                tag.split(";")[0].replace("_", "-").strip()
+                for tag in accepted_languages.split(",")
             ]
             for tag in accepted_languages:
                 for k in range(tag.count("-"), 0, -1):
