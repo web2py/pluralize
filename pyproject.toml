@@ -1,0 +1,16 @@
+[project]
+name = "pluralize"
+version = "20230507.1"
+authors = [{ name="Massimo Di Pierro", email="massimo.dipierro@gmail.com" },]
+description = "i18n + pluralization library with multi-plural form support and thread safe for web apps"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+      "Programming Language :: Python :: 3",
+      "License :: OSI Approved :: BSD License",
+      "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/web2py/pluralize"
+"Bug Tracker" = "https://github.com/web2py/yatl/pluralize"
