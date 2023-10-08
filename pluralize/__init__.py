@@ -4,9 +4,9 @@ import json
 import threading
 import ast
 
-__version__ = "20230507.1"
+__version__ = "20231008.1"
 
-re_language = re.compile("^\w\w(-\w+)*.json$")
+re_language = re.compile(r"^\w\w(-\w+)*.json$")
 
 
 class lazyT(object):
