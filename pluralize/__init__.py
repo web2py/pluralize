@@ -46,7 +46,7 @@ class lazyT(object):
 
 
 class Translator(object):
-    def __init__(self, folder=None):
+    def __init__(self, folder=None, encoding="utf-8"):
         """
         creates a translator object loading languages and pluralizations from translations/en-US.py files
         usage:
@@ -60,6 +60,7 @@ class Translator(object):
         self.local.language = None
         self.missing = set()
         self.folder = folder
+        self.encoding = encoding
         if folder:
             self.load(folder)
 
@@ -68,16 +69,16 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(os.path.join(folder, filename), "r", encoding="utf-8") as fp:
+                with open(os.path.join(folder, filename), "r", encoding=self.encoding) as fp:
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
-    def save(self, folder=None):
+    def save(self, folder=None, ensure_ascii=True):
         """save the loaded translation files"""
         folder = folder or self.folder
         for key in self.languages:
             filename = "%s.json" % key
-            with open(os.path.join(folder, filename), "w") as fp:
-                json.dump(self.languages[key], fp, sort_keys=True, indent=4)
+            with open(os.path.join(folder, filename), "w", encoding=self.encoding) as fp:
+                json.dump(self.languages[key], fp, sort_keys=True, indent=4, ensure_ascii=ensure_ascii)
 
     def select(self, accepted_languages="fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"):
         """given appected_langauges string from HTTP header, picks the best match"""
@@ -120,7 +121,7 @@ class Translator(object):
         return text.format(**kwargs)
 
     @staticmethod
-    def find_matches(folder, name="T", extensions=["py", "js", "html"]):
+    def find_matches(folder, name="T", extensions=["py", "js", "html"], encoding="utf-8"):
         """finds all strings in files in folder needing translations"""
         matches_found = set()
         re_string_t = (
@@ -135,7 +136,7 @@ class Translator(object):
             for name in files:
                 if name.split(".")[-1] in extensions:
                     path = os.path.join(root, name)
-                    with open(path) as fp:
+                    with open(path, encoding=encoding) as fp:
                         data = fp.read()
                     items = regex_t.findall(data)
                     matches_found |= set(map(ast.literal_eval, items))
