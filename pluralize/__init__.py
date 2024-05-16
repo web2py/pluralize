@@ -4,7 +4,7 @@ import json
 import threading
 import ast
 
-__version__ = "20240413.1"
+__version__ = "20240515.1"
 
 re_language = re.compile(r"^\w\w(-\w+)*.json$")
 

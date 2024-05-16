@@ -1,6 +1,6 @@
 [project]
 name = "pluralize"
-version = "20240413.1"
+version = "20240515.1"
 authors = [{ name="Massimo Di Pierro", email="massimo.dipierro@gmail.com" },]
 description = "i18n + pluralization library with multi-plural form support and thread safe for web apps"
 readme = "README.md"
