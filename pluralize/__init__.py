@@ -1,8 +1,8 @@
+import ast
+import json
 import os
 import re
-import json
 import threading
-import ast
 
 __version__ = "20240515.1"
 
@@ -46,7 +46,7 @@ class lazyT(object):
 
 
 class Translator(object):
-    def __init__(self, folder=None, encoding="utf-8"):
+    def __init__(self, folder=None, encoding="utf-8", comment_marker=None):
         """
         creates a translator object loading languages and pluralizations from translations/en-US.py files
         usage:
@@ -61,6 +61,7 @@ class Translator(object):
         self.missing = set()
         self.folder = folder
         self.encoding = encoding
+        self.comment_marker = comment_marker
         if folder:
             self.load(folder)
 
@@ -69,7 +70,9 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(os.path.join(folder, filename), "r", encoding=self.encoding) as fp:
+                with open(
+                    os.path.join(folder, filename), "r", encoding=self.encoding
+                ) as fp:
                     self.languages[filename[:-5].lower()] = json.load(fp)
 
     def save(self, folder=None, ensure_ascii=True):
@@ -77,8 +80,16 @@ class Translator(object):
         folder = folder or self.folder
         for key in self.languages:
             filename = "%s.json" % key
-            with open(os.path.join(folder, filename), "w", encoding=self.encoding) as fp:
-                json.dump(self.languages[key], fp, sort_keys=True, indent=4, ensure_ascii=ensure_ascii)
+            with open(
+                os.path.join(folder, filename), "w", encoding=self.encoding
+            ) as fp:
+                json.dump(
+                    self.languages[key],
+                    fp,
+                    sort_keys=True,
+                    indent=4,
+                    ensure_ascii=ensure_ascii,
+                )
 
     def select(self, accepted_languages="fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"):
         """given appected_langauges string from HTTP header, picks the best match"""
@@ -118,10 +129,14 @@ class Translator(object):
             elif isinstance(translations, dict) and translations:
                 k = max(int(i) for i in translations.keys() if int(i) <= n)
                 text = translations[str(k)].format(**kwargs)
+        if text and self.comment_marker:
+            text = text.split(self.comment_marker)[0]
         return text.format(**kwargs)
 
     @staticmethod
-    def find_matches(folder, name="T", extensions=["py", "js", "html"], encoding="utf-8"):
+    def find_matches(
+        folder, name="T", extensions=["py", "js", "html"], encoding="utf-8"
+    ):
         """finds all strings in files in folder needing translations"""
         matches_found = set()
         re_string_t = (

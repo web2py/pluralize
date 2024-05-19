@@ -1,10 +1,11 @@
 import unittest
+
 from pluralize import Translator
 
 
 class TestPluralization(unittest.TestCase):
     def setUp(self):
-        T = Translator()
+        T = Translator(comment_marker="##")
         T.update_languages(T.find_matches("./"))
         T.languages = {
             "it": {
@@ -14,7 +15,10 @@ class TestPluralization(unittest.TestCase):
                     "2": "due cani",
                     "3": "alcuni cani",
                     "10": "tanti cani",
-                }
+                },
+                "dog##dialect": {
+                    "0": "nisciuno cane",
+                },
             }
         }
         T.select("en;q=0.9,it-IT;q=0.1")
@@ -35,6 +39,13 @@ class TestPluralization(unittest.TestCase):
         self.assertEqual(
             dog + " " + plus + " " + dog.format(n=2), "un cane piu' due cani"
         )
+
+    def test_comments(self):
+        T = self.T
+        dog = T("dog")
+        self.assertEqual(str(dog.format(n=0)), "no cane")
+        dog = T("dog##dialect")
+        self.assertEqual(str(dog.format(n=0)), "nisciuno cane")
 
     def test_idempotency(self):
         T = self.T
