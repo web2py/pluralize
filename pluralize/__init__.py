@@ -4,7 +4,7 @@ import os
 import re
 import threading
 
-__version__ = "20240519.2"
+__version__ = "20240519.3"
 
 re_language = re.compile(r"^\w\w(-\w+)*.json$")
 
@@ -121,6 +121,7 @@ class Translator(object):
         """translates/pluralizes"""
         if not isinstance(text, str):
             text = str(text)
+        using_original = True
         if getattr(self.local, "language", None):
             n = kwargs.get("n", 1)
             translations = self.local.language.get(text)
@@ -129,7 +130,8 @@ class Translator(object):
             elif isinstance(translations, dict) and translations:
                 k = max(int(i) for i in translations.keys() if int(i) <= n)
                 text = translations[str(k)].format(**kwargs)
-        if text and self.comment_marker:
+                using_original = False
+        if text and using_original and self.comment_marker:
             text = text.split(self.comment_marker)[0]
         return text.format(**kwargs)
 
