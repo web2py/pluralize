@@ -25,3 +25,8 @@ build-backend = "setuptools.build_meta"
 [tool.ruff.lint]
 select = []
 ignore = ["E711", "E712"]
+
+[project.optional-dependencies]
+manage = [
+    "twine",
+]
