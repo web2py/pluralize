@@ -4,7 +4,7 @@ import os
 import re
 import threading
 
-__version__ = "20250901.1"
+__version__ = "20250901.2"
 
 re_language = re.compile(r"^\w\w(-\w+)*.json$")
 
