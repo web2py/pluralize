@@ -16,6 +16,7 @@ class TestPluralization(unittest.TestCase):
                     "3": "alcuni cani",
                     "10": "tanti cani",
                 },
+                "dog named {name}": {"0": "cane chiamato {name}"},
                 "dog##dialect": {
                     "0": "nisciuno cane",
                 },
@@ -34,11 +35,20 @@ class TestPluralization(unittest.TestCase):
         self.assertEqual(str(dog.format(n=5)), "alcuni cani")
         self.assertEqual(str(dog.format(n=100)), "tanti cani")
 
+        self.assertEqual(str(dog % dict(n=0)), "no cane")
+        self.assertEqual(str(dog % dict(n=1)), "un cane")
+
         plus = T("plus")
         T.languages["it"]["plus"] = {"0": "piu'"}
         self.assertEqual(
             dog + " " + plus + " " + dog.format(n=2), "un cane piu' due cani"
         )
+
+    def test_interpolation(self):
+        T = self.T
+        dog = T("dog named {name}")
+        self.assertEqual(str(dog.format(name="Snoopy")), "cane chiamato Snoopy")
+        self.assertEqual(str(dog % dict(name="Snoopy")), "cane chiamato Snoopy")
 
     def test_comments(self):
         T = self.T

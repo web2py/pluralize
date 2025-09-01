@@ -4,13 +4,12 @@ import os
 import re
 import threading
 
-__version__ = "20240519.3"
+__version__ = "20250901.1"
 
 re_language = re.compile(r"^\w\w(-\w+)*.json$")
 
 
 class lazyT(object):
-
     """accesssory object used to represent a T("string")"""
 
     def __init__(self, translator, text, **kwargs):
@@ -37,8 +36,12 @@ class lazyT(object):
         return self.xml()
 
     def __mod__(self, obj):
-        """T('route %d') % 66 -> 'route 66'"""
-        return self.xml() % obj
+        """T('route {num}') % dict(num=66) -> 'route 66'"""
+        if not isinstance(obj, dict):
+            # for backward compatibility
+            return self.xml() % obj
+        # new behavior
+        return self.format(**obj)
 
     def xml(self):
         """same as str but for interoperability with yatl helpers"""

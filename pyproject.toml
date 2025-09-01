@@ -1,6 +1,5 @@
 [project]
 name = "pluralize"
-version = "20240519.3"
 authors = [{ name="Massimo Di Pierro", email="massimo.dipierro@gmail.com" },]
 description = "i18n + pluralization library with multi-plural form support and thread safe for web apps"
 readme = "README.md"
@@ -10,7 +9,19 @@ classifiers = [
       "License :: OSI Approved :: BSD License",
       "Operating System :: OS Independent",
 ]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pluralize.__init__.__version__"}
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [project.urls]
 "Homepage" = "https://github.com/web2py/pluralize"
 "Bug Tracker" = "https://github.com/web2py/yatl/pluralize"
+
+[tool.ruff.lint]
+select = []
+ignore = ["E711", "E712"]
