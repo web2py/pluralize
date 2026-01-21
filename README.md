@@ -87,3 +87,20 @@ Finally save the changes:
 ```python
 T.save('translations')
 ```
+## Adding comments
+You can add comments to the original language by using a comment marker.
+This can be useful if you want to translate a specific section.
+
+Initialise the Translator with the marker you want to use (default is None):
+```python
+T = Translator('translations', comment_marker="##")
+```
+Use it like this:
+```python
+msg = T("Beginner's Guide to Python## Title chapter 1")
+```
+If there is no translation available it will show only the part before the marker.
+```python
+>>> print(msg)
+Beginner's Guide to Python
+```
