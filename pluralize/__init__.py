@@ -1,12 +1,40 @@
 import ast
 import json
+import logging
 import os
 import re
 import threading
 
-__version__ = "20250901.2"
+__version__ = "20260519.2"
 
 re_language = re.compile(r"^\w\w(-\w+)*.json$")
+
+log = logging.getLogger("pluralize")
+
+
+def _normalize_language(mapping, source=None):
+    """Coerce string translation values into the {"0": value} shape that
+    _translator expects. Mutates and returns ``mapping``.
+
+    Historically pluralize silently ignored string values — every other i18n
+    library accepts them, so we now accept them too and log a warning so the
+    file can be cleaned up.
+    """
+    for key, value in list(mapping.items()):
+        if isinstance(value, str):
+            mapping[key] = {"0": value}
+            log.warning(
+                "pluralize: translation for %r is a plain string%s; "
+                "normalizing to {\"0\": ...}. Prefer the dict form.",
+                key,
+                f" in {source}" if source else "",
+            )
+        elif isinstance(value, dict):
+            # ensure every entry is a str -> str dict; coerce keys to str
+            coerced = {str(k): v for k, v in value.items()}
+            if coerced != value:
+                mapping[key] = coerced
+    return mapping
 
 
 class lazyT(object):
@@ -73,10 +101,12 @@ class Translator(object):
         self.languages = {}
         for filename in os.listdir(folder):
             if re_language.match(filename):
-                with open(
-                    os.path.join(folder, filename), "r", encoding=self.encoding
-                ) as fp:
-                    self.languages[filename[:-5].lower()] = json.load(fp)
+                path = os.path.join(folder, filename)
+                with open(path, "r", encoding=self.encoding) as fp:
+                    data = json.load(fp)
+                self.languages[filename[:-5].lower()] = _normalize_language(
+                    data, source=path
+                )
 
     def save(self, folder=None, ensure_ascii=True):
         """save the loaded translation files"""
@@ -130,6 +160,10 @@ class Translator(object):
             translations = self.local.language.get(text)
             if translations is None:
                 self.missing.add(text)
+            elif isinstance(translations, str):
+                # plain string: accept it as if it were {"0": value}
+                text = translations.format(**kwargs)
+                using_original = False
             elif isinstance(translations, dict) and translations:
                 k = max(int(i) for i in translations.keys() if int(i) <= n)
                 text = translations[str(k)].format(**kwargs)

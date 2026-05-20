@@ -64,3 +64,24 @@ class TestPluralization(unittest.TestCase):
         b = T(a)
         c = T(b)
         self.assertEqual(str(c.format(n=1)), "un cane")
+
+    def test_accepts_plain_string_value(self):
+        """A translation entered as a plain string should work, not be ignored."""
+        T = Translator()
+        T.languages = {"it": {"hello": "ciao"}}
+        T.select("it")
+        self.assertEqual(str(T("hello")), "ciao")
+
+    def test_load_normalizes_plain_strings(self):
+        """load() should rewrite string values to {"0": value} in-memory."""
+        import json as _json
+        import os as _os
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _os.path.join(tmp, "it.json")
+            with open(path, "w", encoding="utf-8") as fp:
+                _json.dump({"hello": "ciao", "thing": {"0": "cosa", "1": "cose"}}, fp)
+            T = Translator(folder=tmp)
+            self.assertEqual(T.languages["it"]["hello"], {"0": "ciao"})
+            self.assertEqual(T.languages["it"]["thing"], {"0": "cosa", "1": "cose"})

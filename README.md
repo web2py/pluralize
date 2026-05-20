@@ -27,6 +27,14 @@ Here is another example for the word "bed" in Czech
 {"bed": {"0": "no postel", "1": "postel", "2": "postele", "5": "postelí"}}
 ```
 
+A translation value may also be a plain string when no pluralization is needed:
+
+```json
+{"hello": "ciao"}
+```
+
+When loaded, plain-string values are normalized in memory to `{"0": "..."}` and a warning is logged so the file can be cleaned up. The dict form is preferred, but the string form is accepted so that translation files written by other i18n tools work without modification.
+
 To translate and pluralize a string "dog" one simply wraps the string in the T operator as follows:
 
 ```python
@@ -48,12 +56,32 @@ un cane
 tantissimi cani
 ```
 
-The string can contain multiple placeholders but the {n} placeholder is special because
-the variable called "n" is used to determine the pluralization by best match (max dict key <= n).
+The string can contain multiple placeholders but the `{n}` placeholder is special because the variable called `n` is used to determine the pluralization by best match (max dict key `<= n`).
 
-T(...) objects can be added together with each other and with string, like regular strings.
+`T(...)` returns a `lazyT` object: the actual translation lookup is deferred until the value is rendered to a string. This means a `lazyT` can be created at import time and resolved later, after `T.select(...)` has chosen a language.
 
-T.select(s) can parse a string s following the HTTP accept language format.
+`lazyT` objects support:
+
+- Concatenation with each other and with regular strings: `T("hello") + " " + T("world")`.
+- `.format(**kwargs)` to bind placeholder values, including the special `n` for pluralization: `T("dog").format(n=5)`.
+- The `%` operator with a dict, equivalent to `.format(**d)`: `T("route {num}") % {"num": 66}`. With a non-dict argument, `%` falls back to standard string `%` formatting on the translated text (for backward compatibility).
+- `.xml()`, which returns the translated string. It is provided for interoperability with `yatl` HTML helpers, which call `xml()` on embedded values.
+
+`T.select(s)` can parse a string `s` following the HTTP `Accept-Language` header format (e.g. `"fr-CH, fr;q=0.9, en;q=0.8, *;q=0.5"`) and picks the best available match from the loaded languages. Sub-tags are tried as fallbacks (e.g. `fr-CH` falls back to `fr`).
+
+## Constructor options
+
+```python
+Translator(folder=None, encoding="utf-8", comment_marker=None)
+```
+
+- `folder`: directory of `xx.json` / `xx-YY.json` files to load. If omitted, no files are loaded and `T.languages` starts empty.
+- `encoding`: text encoding used to read and write translation files. Defaults to `utf-8`.
+- `comment_marker`: when set (e.g. `"##"`), any text after this marker is stripped from the *original* (untranslated) string before it is returned. This lets you disambiguate identical source strings that need different translations, e.g. `T("Open ##verb")` and `T("Open ##adjective")` — when no translation is selected, the user sees `"Open"`.
+
+## Missing translations
+
+Every source string that is looked up but has no entry in the currently selected language is added to `T.missing` (a `set`). This is useful for finding gaps after running your app against a real workload.
 
 ## Update the translation files
 
@@ -87,3 +115,5 @@ Finally save the changes:
 ```python
 T.save('translations')
 ```
+
+`save()` writes one JSON file per loaded language, sorted by key and indented. Pass `ensure_ascii=False` to keep non-ASCII characters as-is in the output.
